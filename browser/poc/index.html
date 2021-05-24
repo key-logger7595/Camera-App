@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <video autoplay controls></video>
+    <audio autoplay controls></audio>
+
+    <button class="record"> Record </button>
+    <button class="pause">Pause</button>
+
+    <script>
+     
+     let videoElem = document.querySelector("video");
+     let audioElem = document.querySelector("audio");
+     let recordBtn = document.querySelector(".record");
+     let pauseBtn = document.querySelector(".pause");
+
+     let isRecording = false;
+
+     //..user requirement send
+     let constraints = {
+         audio:true,
+         video:true
+     }
+
+     let recording = [];
+     let mediaRecordingObjForCurrentStream ;
+
+     
+     //stream coming from required api
+
+     let userMediaPromise = navigator.mediaDevices.getUserMedia(constraints);
+     userMediaPromise.then(function(stream){
+         videoElem.srcObject = stream;
+         audioElem.srcObject = stream;
+
+         //creating a newmediarecording object using media recording api
+         mediaRecordingObjForCurrentStream = new MediaRecorder(stream);
+
+         //camera recording add -> recording array
+         mediaRecordingObjForCurrentStream.ondataavailable = function(e){
+
+             console.log("Am i coming here ");
+             recording.push(e.data);
+
+         }
+
+         mediaRecordingObjForCurrentStream.addEventListener("stop",function(e){
+            //type -> MIME type
+            const blob = new Blob(recording,{type:'video/mp4'});
+            const url = window.URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.download = "file.mp4";
+            a.href =url;
+            a.click();
+            recording = [] ;
+            
+         })
+     })
+     .catch(function(err){
+         alert("please allow both microphone aand camera");
+     })
+
+      recordBtn.addEventListener("click",function(){
+          if(mediaRecordingObjForCurrentStream == undefined){
+              alert("first select the devices");
+              return;
+          }
+          if(isRecording == false){
+              //starting the recording using start function 
+              console.log("am i coming here");
+              mediaRecordingObjForCurrentStream.start();
+              recordBtn.innerText = "Recording.. ";
+
+          }
+          else{
+             //stopping the recording
+            mediaRecordingObjForCurrentStream.stop();
+            recordBtn.innerText = "Record ";
+
+          }
+
+          isRecording = !isRecording;
+      })
+ 
+
+    </script>
+</body>
+</html>
