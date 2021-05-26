@@ -5,11 +5,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            /* background-color: lightblue; */
+            margin: 0px;
+        }
+
+        .colors {
+            width: 80vw;
+            height: 5rem;
+            border: 2px solid;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .color,
+        .download {
+            height: 70%;
+            width: 20%;
+        }
+
+        .red {
+            background-color: lightcoral;
+        }
+
+        .green {
+            background-color: lightgreen;
+        }
+
+        .blue {
+            background-color: lightblue;
+        }
+
+        .download {
+            border: 3px solid;
+            padding-top: 1rem;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
     <!-- canvas tag  -->
- <h1>Canvas Board</h1>
-
+    <div class="colors">
+        <div class="color red"></div>
+        <div class="color green"></div>
+        <div class="color blue"></div>
+        <div class="download">Download</div>
+        <!-- <input type="file" class="file-selector" style="display: none;"> -->
+    </div>
+    <img src="https://picsum.photos/200" style="display: none;" alt="" crossorigin="anonymous">
 
   <!-- tablet  -->
   <canvas class="board"></canvas>
@@ -29,20 +80,105 @@
 
       //color of the created rectangle
       tool.fillStyle  = "lightgreen";
-      //fillRect actually creating rectangle acc to cordinate 0,0)
-      tool.fillRect(0,0,window.innerWidth/2,window.innerHeight);
-      //setting outline boundary 
-      tool.strokeStyle="yellow";
-      //linewidth setting size of the boundary 
-      tool.lineWidth = 10;
+    //   //fillRect actually creating rectangle acc to cordinate 0,0)
+    //   tool.fillRect(0,0,window.innerWidth / 2,window.innerHeight / 2);
+    //   //setting outline boundary 
+    //   tool.strokeStyle="yellow";
+    //   //linewidth setting size of the boundary 
+    //   tool.lineWidth = 10;
         
-      //drawing boundary from strokeRect
-      tool.strokeRect(10,10,window.innerWidth/2,window.innerHeight);
-       
-      //setting color of the rectangle using fillStyle before using fillReact 
-      tool.fillStyle ="red";
-      tool.fillRect(40,40,window.innerWidth/2,window.innerHeight);
+    //             tool.beginPath();
+    //             tool.moveTo(100, 100);
+    //             tool.lineTo(200, 50);
+    //             tool.lineTo(200, 200)
+    //             tool.moveTo(50, 300);
+    //             tool.lineTo(200, 300);
+    //             tool.stroke();
+    //             // new path -> 
+    //             tool.beginPath();
+    //             tool.moveTo(200, 300);
+    //             tool.strokeStyle = "red";
+    //             tool.lineWidth = 10;
+    //             tool.lineTo(200, 200);
+    //             tool.moveTo(250, 150);
+    //             // tool.lineTo(200,300);
+    //             tool.stroke();
 
+
+       
+
+
+
+
+    //   //drawing boundary from strokeRect
+    //   tool.strokeRect(10,10,window.innerWidth/2,window.innerHeight);
+       
+    //   //setting color of the rectangle using fillStyle before using fillReact 
+    //   tool.fillStyle ="red";
+    //   tool.fillRect(40,40,window.innerWidth/2,window.innerHeight);
+
+    tool.strokeStyle = "red";
+    tool.lineWidth = 7;
+    let isDown = false;
+
+    let colorArr = document.querySelectorAll(".color");
+    let colorContainer = document.querySelector(".colors");
+
+
+    for(let i=0;i<colorArr.length;i++){
+        colorArr[i].addEventListener("click",function(){
+            let newColor = colorArr[i].classList[1] ;
+            if(newColor == "red"){
+                tool.strokeStyle = newColor;
+            }
+            else{
+                tool.strokeStyle = "light" + newColor;
+            }
+        })
+    }
+
+    board.addEventListener("mousedown",function(e){
+       
+       tool.beginPath();
+       tool.moveTo(e.clientX,getY(e.clientY));
+        isDown = true;
+
+    })
+    board.addEventListener("mousemove",function(e){
+        
+        if(isDown==true){
+            tool.lineTo(e.clientX,getY(e.clientY));
+            tool.stroke();
+        }
+    })
+    board.addEventListener("mouseup",function(e){
+        // tool.lineTo(e.clientX,e.clientY);
+        // tool.stroke();
+        isDown =false;
+    })
+
+    function getY(originalY){
+      let obj = colorContainer.getBoundingClientRect();
+      let objHeight = obj.height;
+      return originalY-objHeight;
+    }
+
+  </script>
+  <script>
+      let download = document.querySelector(".download");
+      download.addEventListener("click",function(){
+          let url = board.toDataURL();
+          let a = document.createElement("a");
+          a.download = "file.png";
+          a.href = url ;
+          a.click();
+          a.remove();
+      }) 
+  </script>
+  <script>
+      //drawing image on the canvas board
+    
+      
   </script>
 </body>
 </html>
