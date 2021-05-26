@@ -2,6 +2,7 @@
 let videoElem = document.querySelector("video");
 // 1. 
 let recordBtn = document.querySelector(".record");
+let captureBtnImage = document.querySelector(".click-image");
 let isRecording = false;
 // user  requirement send 
 let constraint = {
@@ -41,6 +42,7 @@ usermediaPromise.
         console.log(err)
         alert("please allow both microphone and camera");
     });
+
 recordBtn.addEventListener("click", function () {
     if (mediarecordingObjectForCurrStream == undefined) {
         alert("First select the devices");
@@ -55,4 +57,23 @@ recordBtn.addEventListener("click", function () {
         recordBtn.innerText = "Record";
     }
     isRecording = !isRecording
+})
+
+
+//code for capturing thwe image and then downloading it 
+captureBtnImage.addEventListener("click",function(){
+    let canvas = document.createElement("canvas");
+    canvas.height = videoElem.videoHeight;
+    canvas.width = videoElem.videoWidth;
+
+    let tool = canvas.getContext("2d");
+    tool.drawImage(videoElem,0,0);
+    
+    let url = canvas.toDataURL();
+    let a = document.createElement("a");
+    a.download = "file.png";
+    a.href = url;
+    a.click();
+    a.remove();
+    
 })

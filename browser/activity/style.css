@@ -20,8 +20,9 @@ body{
     top: 30%;
     right: 26px;
     border-radius: 50%;
+    z-index:3;
 }
-.click{
+.click-image{
     top: 45%;  
 }
 
