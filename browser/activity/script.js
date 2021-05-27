@@ -3,6 +3,12 @@ let videoElem = document.querySelector("video");
 // 1. 
 let recordBtn = document.querySelector(".record");
 let captureBtnImage = document.querySelector(".click-image");
+let filterColorArr = document.querySelectorAll(".filter");
+
+let filterOverlayDiv  = document.querySelector(".filter-overlay");
+let timingDiv = document.querySelector(".timing");
+let clearObjInterval;
+let filterColor ; 
 let isRecording = false;
 // user  requirement send 
 let constraint = {
@@ -51,10 +57,12 @@ recordBtn.addEventListener("click", function () {
     if (isRecording == false) {
         mediarecordingObjectForCurrStream.start();
         recordBtn.innerText = "Recording....";
+        startTimer();
     }
     else {
         mediarecordingObjectForCurrStream.stop();
         recordBtn.innerText = "Record";
+        stopTimer();
     }
     isRecording = !isRecording
 })
@@ -68,7 +76,10 @@ captureBtnImage.addEventListener("click",function(){
 
     let tool = canvas.getContext("2d");
     tool.drawImage(videoElem,0,0);
-    
+    if(filterColor){
+        tool.fillStyle=filterColor;
+        tool.fillRect(0,0,canvas.width,canvas.height)
+    }
     let url = canvas.toDataURL();
     let a = document.createElement("a");
     a.download = "file.png";
@@ -77,3 +88,40 @@ captureBtnImage.addEventListener("click",function(){
     a.remove();
     
 })
+//setting event listener on filtering options 
+for(let i=0;i<filterColorArr.length;i++){
+    filterColorArr[i].addEventListener("click",function(){
+        filterColor = filterColorArr[i].style.backgroundColor;
+        filterOverlayDiv.style.backgroundColor = filterColor;
+    })
+}
+
+ let counter=0;
+ function startTimer(){
+ timingDiv.style.display = "block";
+ function cb(){
+
+     let days = Number.parseInt(counter/(24 * 3600));
+     let remTime = (counter % (24 * 3600));
+     let hours  = Number.parseInt(remTime/3600);
+     remTime =  (remTime % 3600) ;
+     let mins = Number.parseInt(remTime/60);
+     remTime = (remTime % 60);
+     let seconds = remTime;
+
+     days = days < 10 ?`0${days}`:days ;
+     hours = hours < 10 ?`0${hours}`:hours;
+     mins = mins < 10?`0${mins}`:mins;
+     seconds = seconds<10?`0${seconds}`:seconds;
+
+     timingDiv.innerText = `${days}:${hours}:${mins}:${seconds}`;
+     counter++;    
+
+    }
+
+    clearObjInterval = setInterval(cb,1000);
+}
+function stopTimer(){
+  timingDiv.style.display ="none";
+  clearInterval(clearObjInterval);  
+}
