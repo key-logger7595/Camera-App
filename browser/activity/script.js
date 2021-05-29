@@ -7,9 +7,14 @@ let filterColorArr = document.querySelectorAll(".filter");
 
 let filterOverlayDiv  = document.querySelector(".filter-overlay");
 let timingDiv = document.querySelector(".timing");
+let plusBtn = document.querySelector(".plus");
+let minusBtn = document.querySelector(".minus");
+console.log(minusBtn);
+console.log(plusBtn);
 let clearObjInterval;
 let filterColor ; 
 let isRecording = false;
+let scaleLevelUp = 1;
 // user  requirement send 
 let constraint = {
     audio: true, video: true
@@ -56,12 +61,14 @@ recordBtn.addEventListener("click", function () {
     }
     if (isRecording == false) {
         mediarecordingObjectForCurrStream.start();
-        recordBtn.innerText = "Recording....";
+        // recordBtn.innerText = "Recording....";
+        recordBtn.classList.add("record-animation");
         startTimer();
     }
     else {
         mediarecordingObjectForCurrStream.stop();
-        recordBtn.innerText = "Record";
+        // recordBtn.innerText = "Record";
+        recordBtn.classList.remove("record-animation");
         stopTimer();
     }
     isRecording = !isRecording
@@ -75,6 +82,13 @@ captureBtnImage.addEventListener("click",function(){
     canvas.width = videoElem.videoWidth;
 
     let tool = canvas.getContext("2d");
+
+    //we need to do something here to set canvas height width 
+    //according to zoomed image such that we download zoomed image 
+    tool.scale(scaleLevel, scaleLevel);
+    const x = (tool.canvas.width / scaleLevel - videoElem.videoWidth) / 2;
+    const y = (tool.canvas.height / scaleLevel - videoElem.videoHeight) / 2;
+    
     tool.drawImage(videoElem,0,0);
     if(filterColor){
         tool.fillStyle=filterColor;
@@ -122,6 +136,28 @@ for(let i=0;i<filterColorArr.length;i++){
     clearObjInterval = setInterval(cb,1000);
 }
 function stopTimer(){
+  counter = 0;    
   timingDiv.style.display ="none";
-  clearInterval(clearObjInterval);  
+  timingDiv.innerText="00:00:00:00"; 
+  clearInterval(clearObjInterval);
+ 
 }
+
+
+
+minusBtn.addEventListener("click",function(){
+  if(scaleLevelUp > 1){
+      scaleLevelUp-=0.1;
+      videoElem.style.transform = `scale(${scaleLevelUp})`;
+  }
+
+})
+
+plusBtn.addEventListener("click",function(){
+    if(scaleLevelUp < 1.7){
+        scaleLevelUp+= 0.1;
+        videoElem.style.transform = `scale(${scaleLevelUp})`;
+    }
+  
+  })
+  
